@@ -1,6 +1,5 @@
 package easy;
 
-import java.util.Map;
 import topics.THashTable;
 import topics.TMath;
 import topics.TString;
@@ -45,16 +44,6 @@ import topics.TString;
 @TString
 public class RomanToInteger {
 
-  private static final Map<Character, Integer> ROMANS = Map.of(
-      'I', 1,
-      'V', 5,
-      'X', 10,
-      'L', 50,
-      'C', 100,
-      'D', 500,
-      'M', 1000
-  );
-
   public int romanToInt(String s) {
     int result = 0;
     if (s == null || s.isBlank() || s.length() < 1 || s.length() > 15) {
@@ -63,7 +52,16 @@ public class RomanToInteger {
 
     int previous = 0;
     for (int i = s.length() - 1; i >= 0; i--) {
-      int current = ROMANS.get(s.charAt(i));
+      int current = switch (s.charAt(i)) {
+        case 'I' -> 1;
+        case 'V' -> 5;
+        case 'X' -> 10;
+        case 'L' -> 50;
+        case 'C' -> 100;
+        case 'D' -> 500;
+        case 'M' -> 1000;
+        default -> 0;
+      };
       result = previous > current ? result - current : result + current;
       previous = current;
     }
