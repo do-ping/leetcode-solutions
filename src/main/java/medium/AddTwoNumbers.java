@@ -53,24 +53,24 @@ import topics.TRecursion;
 public class AddTwoNumbers {
 
   public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
-    if (l1.next == null && l1.val == 0) {
-      return l2;
+    ListNode dummyHead = new ListNode(0);
+    ListNode p = l1, q = l2, current = dummyHead;
+    int carry = 0;
+    while (p != null || q != null) {
+      int sum = carry + (p == null ? 0 : p.val) + (q == null ? 0 : q.val);
+      carry = sum / 10;
+
+      current.next = new ListNode(sum % 10);
+      current = current.next;
+
+      p = p != null ? p.next : null;
+      q = q != null ? q.next : null;
     }
-    if (l2.next == null && l2.val == 0) {
-      return l1;
+    if (carry > 0) {
+      current.next = new ListNode(carry);
     }
 
-    return add(l1, l2, 0);
-  }
-
-  ListNode add(ListNode l1, ListNode l2, int carry) {
-    if (l1 == null && l2 == null && carry == 0) {
-      return null;
-    }
-    int sum = (l1 == null ? 0 : l1.val) + (l2 == null ? 0 : l2.val) + carry;
-    l1 = l1 != null ? l1.next : null;
-    l2 = l2 != null ? l2.next : null;
-    return new ListNode(sum % 10, add(l1, l2, sum / 10));
+    return dummyHead.next;
   }
 
   public static class ListNode {
