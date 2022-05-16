@@ -1,13 +1,11 @@
 package easy;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import easy.PalindromeLinkedList.ListNode;
 import java.util.List;
 import java.util.stream.Stream;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -58,21 +56,5 @@ class PalindromeLinkedListTest {
   void isPalindrome(List<Integer> numbers, boolean expected) {
     ListNode firstNode = buildList(numbers);
     assertEquals(expected, solution.isPalindrome(firstNode));
-  }
-
-  @Test
-  void reverse() {
-    var input = List.of(1, 2, 3, 4, 5, 6);
-    var expected = List.of(6, 5, 4, 3, 2, 1);
-    ListNode reverse = PalindromeLinkedList.reverse(buildList(input));
-    ListNode expectedL = buildList(expected);
-    while (reverse != null) {
-      if (reverse.val != expectedL.val) {
-        fail("List and its reversed version differ. Source: %d, reversed: %d".formatted(
-            expectedL.val, reverse.val));
-      }
-      reverse = reverse.next;
-      expectedL = expectedL.next;
-    }
   }
 }

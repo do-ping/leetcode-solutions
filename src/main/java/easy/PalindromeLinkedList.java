@@ -50,44 +50,43 @@ public class PalindromeLinkedList {
     if (head.next.next == null) {
       return head.val == head.next.val;
     }
-    ListNode slowPointer = head;
-    ListNode fastPointer = head;
-
-    // after cycle, fast pointer is at the end of the list, slow - in the middle
-    while (fastPointer.next != null) {
-      if (fastPointer.next.next == null) {
-        break;
+    // find middle
+    ListNode firstHalfEnd;
+    {
+      firstHalfEnd = head;
+      ListNode fast = head;
+      while (fast.next != null && fast.next.next != null) {
+        fast = fast.next.next;
+        firstHalfEnd = firstHalfEnd.next;
       }
-      slowPointer = slowPointer.next;
-      fastPointer = fastPointer.next.next;
     }
-
-    // reverse second half of the given list starting from slow pointer that sits in the middle
-    ListNode last = reverse(slowPointer);
-
-    // starting from the end of the list, traverse to the middle, simultaneously comparing
-    // equally distanced digits: 1 2 3 2 1 -> 1=1 2=2.
-    // As long as each pair of values equals, we got palindrome
-    while (last.next != null) {
-      if (head.val != last.val) {
-        return false;
+    // reverse second half
+    ListNode secondHalfStart = firstHalfEnd.next;
+    {
+      ListNode prev = null;
+      ListNode current = secondHalfStart;
+      while (current != null) {
+        ListNode oldNext = current.next;
+        current.next = prev;
+        prev = current;
+        current = oldNext;
       }
-      head = head.next;
-      last = last.next;
+      secondHalfStart = prev;
+    }
+    // compare
+    {
+      ListNode p1 = head;
+      ListNode p2 = secondHalfStart;
+      while (p2 != null) {
+        if (p1.val != p2.val) {
+          return false;
+        }
+        p1 = p1.next;
+        p2 = p2.next;
+      }
     }
 
     return true;
-  }
-
-  static ListNode reverse(ListNode head) {
-    if (head == null || head.next == null) {
-      return head;
-    }
-    ListNode rest = reverse(head.next);
-    head.next.next = head;
-
-    head.next = null;
-    return rest;
   }
 
   static class ListNode {
