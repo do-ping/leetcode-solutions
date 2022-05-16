@@ -75,50 +75,48 @@ import topics.TString;
 @TString
 public class IntegerToRoman {
 
-  private static char getRoman(int i) {
-    return switch (i) {
-      case 1 -> 'I';
-      case 5 -> 'V';
-      case 10 -> 'X';
-      case 50 -> 'L';
-      case 100 -> 'C';
-      case 500 -> 'D';
-      case 1000 -> 'M';
-      default -> 0;
-    };
-  }
-
   public String intToRoman(int num) {
-    StringBuilder result = new StringBuilder();
     if (num < 0 || num > 3999) {
-      return result.toString();
+      return "";
     }
 
+    final StringBuilder result = new StringBuilder();
     int domain = num >= 1000 ? 1000 : num >= 100 ? 100 : num >= 10 ? 10 : 1;
     int numberOf; // number of thousands, hundreds or dozens
     do {
       numberOf = num / domain;
 
-      char[] roman;
+      int[] toRoman;
       if (numberOf == 9) {
-        roman = new char[]{getRoman(domain), getRoman(domain * 10)};
+        toRoman = new int[]{domain, domain * 10};
       } else if (numberOf >= 5) {
-        roman = new char[numberOf - 5 + 1];
-        roman[0] = getRoman(domain * 5);
-        char r = getRoman(domain);
+        toRoman = new int[numberOf - 5 + 1];
+        toRoman[0] = domain * 5;
         for (int i = numberOf - 5; i > 0; i--) {
-          roman[i] = r;
+          toRoman[i] = domain;
         }
       } else if (numberOf == 4) {
-        roman = new char[]{getRoman(domain), getRoman(domain * 5)};
+        toRoman = new int[]{domain, domain * 5};
       } else {
-        roman = new char[numberOf];
-        char r = getRoman(domain);
+        toRoman = new int[numberOf];
         for (int i = numberOf; i > 0; i--) {
-          roman[i - 1] = r;
+          toRoman[i - 1] = domain;
         }
       }
-      result.append(roman);
+
+      for (int v : toRoman) {
+        result.append((char) switch (v) {
+          case 1 -> 'I';
+          case 5 -> 'V';
+          case 10 -> 'X';
+          case 50 -> 'L';
+          case 100 -> 'C';
+          case 500 -> 'D';
+          case 1000 -> 'M';
+          default -> 0;
+        });
+      }
+
       num = num % domain; // cut thousands, cut hundreds, cut dozens
       domain = domain / 10; // move from thousands to hundreds domain, hundreds to dozens ...
     } while (domain > 0);
