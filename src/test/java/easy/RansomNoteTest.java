@@ -17,13 +17,11 @@ class RansomNoteTest {
       "a,b,false",
       "aa,ab,false",
       "aa,aab,true",
-      "i got your dog,i got your dog,true",
-      "i got your dog,abcdefgghijklmnooopqrstuvwxyz,true",
-      "keep coding,coding is the activity for,false"
+      "igotyourdog,igotyourdog,true",
+      "igotyourdog,abcdefgghijklmnooopqrstuvwxyz,true",
+      "keepcoding,codingistheactivityfor,false"
   })
   void canConstruct(String ransomNote, String magazine, boolean expected) {
-    assertEquals(expected,
-        solution.canConstruct(ransomNote.replaceAll("\s", ""),
-            magazine.replaceAll("\s", "")));
+    assertEquals(expected, solution.canConstruct(ransomNote, magazine));
   }
 }

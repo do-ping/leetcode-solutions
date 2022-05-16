@@ -1,7 +1,5 @@
 package easy;
 
-import java.util.HashMap;
-import java.util.Map;
 import topics.THashTable;
 import topics.TString;
 
@@ -39,10 +37,6 @@ import topics.TString;
  *   <li>String</li>
  *   <li>Counting</li>
  * </ul>
- * <p><b>Note to self:</b>
- * Runtime: 18 ms
- * Memory Usage: 42.9 MB
- * Fastest solution with simple loops and contains checks (no putIfAbsent etc.)</p>
  */
 @THashTable
 @TString
@@ -52,29 +46,29 @@ public class RansomNote {
     if (ransomNote.isEmpty() || magazine.isEmpty()) {
       return false;
     }
+    if (ransomNote.length() > magazine.length()) {
+      return false;
+    }
     if (ransomNote.length() == 1 && magazine.length() == 1) {
-      return ransomNote.equals(magazine);
+      return ransomNote.charAt(0) == magazine.charAt(0);
     }
     if (ransomNote.length() == 1) {
       return magazine.contains(ransomNote);
     }
 
-    Map<Character, Integer> charToQuantity = new HashMap<>();
-    for (char c : magazine.toCharArray()) {
-      if (charToQuantity.containsKey(c)) {
-        int quantity = charToQuantity.get(c);
-        charToQuantity.put(c, ++quantity);
-      } else {
-        charToQuantity.put(c, 1);
-      }
+    int[] chars = new int[26];
+    for (int i = 0; i < ransomNote.length(); i++) {
+      ++chars[ransomNote.charAt(i) - 97];
     }
 
-    for (char c : ransomNote.toCharArray()) {
-      if (!charToQuantity.containsKey(c) || charToQuantity.get(c) <= 0) {
+    for (int i = 0; i < magazine.length(); i++) {
+      --chars[magazine.charAt(i) - 97];
+    }
+
+    for (int i : chars) {
+      if (i > 0) {
         return false;
       }
-      int quantity = charToQuantity.get(c);
-      charToQuantity.put(c, --quantity);
     }
 
     return true;
