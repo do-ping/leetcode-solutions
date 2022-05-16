@@ -81,45 +81,30 @@ public class IntegerToRoman {
     }
 
     final StringBuilder result = new StringBuilder();
-    int domain = num >= 1000 ? 1000 : num >= 100 ? 100 : num >= 10 ? 10 : 1;
-    int numberOf; // number of thousands, hundreds or dozens
-    do {
-      numberOf = num / domain;
+    final int[] nums = new int[]{1, 4, 5, 9, 10, 40, 50, 90, 100, 400, 500, 900, 1000};
 
-      int[] toRoman;
-      if (numberOf == 9) {
-        toRoman = new int[]{domain, domain * 10};
-      } else if (numberOf >= 5) {
-        toRoman = new int[numberOf - 5 + 1];
-        toRoman[0] = domain * 5;
-        for (int i = numberOf - 5; i > 0; i--) {
-          toRoman[i] = domain;
-        }
-      } else if (numberOf == 4) {
-        toRoman = new int[]{domain, domain * 5};
-      } else {
-        toRoman = new int[numberOf];
-        for (int i = numberOf; i > 0; i--) {
-          toRoman[i - 1] = domain;
-        }
-      }
-
-      for (int v : toRoman) {
-        result.append((char) switch (v) {
-          case 1 -> 'I';
-          case 5 -> 'V';
-          case 10 -> 'X';
-          case 50 -> 'L';
-          case 100 -> 'C';
-          case 500 -> 'D';
-          case 1000 -> 'M';
+    for (int i = nums.length - 1; i >= 0; i--) {
+      int current = nums[i];
+      while (num >= current) {
+        result.append(switch (current) {
+          case 1000 -> "M";
+          case 900 -> "CM";
+          case 500 -> "D";
+          case 400 -> "CD";
+          case 100 -> "C";
+          case 90 -> "XC";
+          case 50 -> "L";
+          case 40 -> "XL";
+          case 10 -> "X";
+          case 9 -> "IX";
+          case 5 -> "V";
+          case 4 -> "IV";
+          case 1 -> "I";
           default -> 0;
         });
+        num -= current;
       }
-
-      num = num % domain; // cut thousands, cut hundreds, cut dozens
-      domain = domain / 10; // move from thousands to hundreds domain, hundreds to dozens ...
-    } while (domain > 0);
+    }
 
     return result.toString();
   }
