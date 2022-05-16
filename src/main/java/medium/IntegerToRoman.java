@@ -88,44 +88,41 @@ public class IntegerToRoman {
     };
   }
 
-  static void toRoman(int numberOf, int firstNumberWithPlusOneDigit) {
-    if (numberOf == 9) {
-      result.append(getRoman(firstNumberWithPlusOneDigit / 10));
-      result.append(getRoman(firstNumberWithPlusOneDigit));
-    } else if (numberOf >= 5) {
-      result.append(getRoman(firstNumberWithPlusOneDigit >> 1));
-      result.append(
-          String.valueOf(getRoman(firstNumberWithPlusOneDigit / 10)).repeat(numberOf - 5));
-    } else if (numberOf == 4) {
-      result.append(getRoman(firstNumberWithPlusOneDigit / 10));
-      result.append(getRoman(firstNumberWithPlusOneDigit >> 1));
-    } else {
-      result.append(
-          String.valueOf(getRoman(firstNumberWithPlusOneDigit / 10)).repeat(Math.max(0, numberOf)));
-    }
-  }
-
-  private static final StringBuilder result = new StringBuilder();
-
   public String intToRoman(int num) {
-    result.delete(0, result.length());
+    StringBuilder result = new StringBuilder();
     if (num < 0 || num > 3999) {
-      return "";
+      return result.toString();
     }
 
-    result.append("M".repeat(num / 1000));
-    num = num % 1000;
-    toRoman(num / 100, 1000);
-    num = num % 100;
-    toRoman(num / 10, 100);
-    num = num % 10;
-    toRoman(num, 10);
+    int domain = num >= 1000 ? 1000 : num >= 100 ? 100 : num >= 10 ? 10 : 1;
+    int numberOf; // number of thousands, hundreds or dozens
+    do {
+      numberOf = num / domain;
+
+      char[] roman;
+      if (numberOf == 9) {
+        roman = new char[]{getRoman(domain), getRoman(domain * 10)};
+      } else if (numberOf >= 5) {
+        roman = new char[numberOf - 5 + 1];
+        roman[0] = getRoman(domain * 5);
+        char r = getRoman(domain);
+        for (int i = numberOf - 5; i > 0; i--) {
+          roman[i] = r;
+        }
+      } else if (numberOf == 4) {
+        roman = new char[]{getRoman(domain), getRoman(domain * 5)};
+      } else {
+        roman = new char[numberOf];
+        char r = getRoman(domain);
+        for (int i = numberOf; i > 0; i--) {
+          roman[i - 1] = r;
+        }
+      }
+      result.append(roman);
+      num = num % domain; // cut thousands, cut hundreds, cut dozens
+      domain = domain / 10; // move from thousands to hundreds domain, hundreds to dozens ...
+    } while (domain > 0);
 
     return result.toString();
-  }
-
-  public static void main(String[] args) {
-    IntegerToRoman solution = new IntegerToRoman();
-    System.out.println(solution.intToRoman(3999));
   }
 }
