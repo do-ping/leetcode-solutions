@@ -1,10 +1,5 @@
 package medium;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 import topics.THashTable;
 import topics.TMath;
 import topics.TString;
@@ -93,58 +88,44 @@ public class IntegerToRoman {
     };
   }
 
-  static int howMany(int num, int what) {
-    int result = 0;
-    if (num < what) {
-      return result;
-    }
-
-    int i = 0;
-    do {
-      i += what;
-      result++;
-    } while (num - i >= what);
-
-    return result;
-  }
-
-  static List<Character> toRoman(int numberOf, int firstNumberWithPlusOneDigit) {
-    List<Character> result = new ArrayList<>(4);
-
+  static void toRoman(int numberOf, int firstNumberWithPlusOneDigit) {
     if (numberOf == 9) {
-      result.add(getRoman(firstNumberWithPlusOneDigit / 10));
-      result.add(getRoman(firstNumberWithPlusOneDigit));
-    } else if (numberOf < 9 && numberOf >= 5) {
-      result.add(getRoman(firstNumberWithPlusOneDigit / 2));
-      for (int i = numberOf - 5; i > 0; i--) {
-        result.add(getRoman(firstNumberWithPlusOneDigit / 10));
-      }
+      result.append(getRoman(firstNumberWithPlusOneDigit / 10));
+      result.append(getRoman(firstNumberWithPlusOneDigit));
+    } else if (numberOf >= 5) {
+      result.append(getRoman(firstNumberWithPlusOneDigit >> 1));
+      result.append(
+          String.valueOf(getRoman(firstNumberWithPlusOneDigit / 10)).repeat(numberOf - 5));
     } else if (numberOf == 4) {
-      result.add(getRoman(firstNumberWithPlusOneDigit / 10));
-      result.add(getRoman(firstNumberWithPlusOneDigit / 2));
+      result.append(getRoman(firstNumberWithPlusOneDigit / 10));
+      result.append(getRoman(firstNumberWithPlusOneDigit >> 1));
     } else {
-      for (int i = numberOf; i > 0; i--) {
-        result.add(getRoman(firstNumberWithPlusOneDigit / 10));
-      }
+      result.append(
+          String.valueOf(getRoman(firstNumberWithPlusOneDigit / 10)).repeat(Math.max(0, numberOf)));
     }
-
-    return result;
   }
+
+  private static final StringBuilder result = new StringBuilder();
 
   public String intToRoman(int num) {
+    result.delete(0, result.length());
     if (num < 0 || num > 3999) {
       return "";
     }
 
-    int thousands = howMany(num, 1000);
-    int hundreds = howMany(num - (thousands * 1000), 100);
-    int dozens = howMany(num - (thousands * 1000) - (hundreds * 100), 10);
-    int leftover = num - (thousands * 1000) - (hundreds * 100) - (dozens * 10);
-    return Stream.of(
-        IntStream.range(0, thousands).mapToObj(x -> getRoman(1000)),
-        toRoman(hundreds, 1000).stream(),
-        toRoman(dozens, 100).stream(),
-        toRoman(leftover, 10).stream()
-    ).flatMap(s -> s.map(String::valueOf)).collect(Collectors.joining(""));
+    result.append("M".repeat(num / 1000));
+    num = num % 1000;
+    toRoman(num / 100, 1000);
+    num = num % 100;
+    toRoman(num / 10, 100);
+    num = num % 10;
+    toRoman(num, 10);
+
+    return result.toString();
+  }
+
+  public static void main(String[] args) {
+    IntegerToRoman solution = new IntegerToRoman();
+    System.out.println(solution.intToRoman(3999));
   }
 }
