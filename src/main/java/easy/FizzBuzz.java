@@ -3,6 +3,7 @@ package easy;
 import java.util.Arrays;
 import java.util.List;
 import topics.TMath;
+import topics.TSimulation;
 import topics.TString;
 
 /**
@@ -46,6 +47,7 @@ import topics.TString;
  */
 @TMath
 @TString
+@TSimulation
 public class FizzBuzz {
 
   public List<String> fizzBuzz(int n) {
