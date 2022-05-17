@@ -77,46 +77,29 @@ import topics.TSorting;
 public class TheKWeakestRowsInAMatrix {
 
   public int[] kWeakestRows(int[][] mat, int k) {
-    MinPriorityQueue priorityQueue = new MinPriorityQueue(mat.length);
+    int[][] queue = new int[mat.length][2];
     for (int i = 0; i < mat.length; i++) {
-      priorityQueue.insert(i, binarySearch(mat[i]));
+      queue[i] = new int[]{i, binarySearch(mat[i])};
     }
+
     int[] result = new int[k];
+    int heapSize = mat.length;
     for (int i = k; i > 0; i--) {
-      result[result.length - i] = priorityQueue.removeMin();
+      int max = 0;
+      for (int j = 1; j < heapSize; j++) {
+        if ((queue[max][1] == queue[j][1] && queue[max][0] > queue[j][0]) ||
+            queue[max][1] > queue[j][1]) {
+          max = j;
+        }
+      }
+      // exchange
+      int[] temp = queue[max];
+      queue[max] = queue[heapSize - 1];
+      queue[heapSize - 1] = temp;
+      // get first
+      result[result.length - i] = queue[--heapSize][0];
     }
     return result;
-  }
-
-  static class MinPriorityQueue {
-
-    private static final int INDEX = 0;
-    private static final int SUM = 1;
-    private final int[][] pq;
-    private int n = 0;
-
-    public MinPriorityQueue(int maxN) {
-      pq = new int[maxN][2];
-    }
-
-    void insert(int rowIndex, int rowSum) {
-      int[] key = new int[]{rowIndex, rowSum};
-      int i = n - 1;
-      while (i >= 0 && less(key, pq[i])) {
-        pq[i + 1] = pq[i];
-        i--;
-      }
-      pq[i + 1] = key;
-      n++;
-    }
-
-    int removeMin() {
-      return pq[pq.length - 1 - --n][INDEX];
-    }
-
-    private boolean less(int[] i, int[] j) {
-      return i[SUM] == j[SUM] ? i[INDEX] < j[INDEX] : i[SUM] < j[SUM];
-    }
   }
 
   static int binarySearch(int[] row) {
