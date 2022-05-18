@@ -1,7 +1,5 @@
 package medium;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import topics.THashTable;
 import topics.TString;
 
@@ -45,22 +43,17 @@ public class LongestSubstringWithoutRepeatingCharacters {
     }
 
     int maxLength = 0;
-    Queue<Character> window = new ArrayDeque<>();
+    final StringBuilder window = new StringBuilder();
 
     for (int i = 0; i < s.length(); i++) {
-      char currentChar = s.charAt(i);
-
-      if (window.contains(currentChar)) {
-        // delete all chars before duplicate if any
-        while (!window.isEmpty() && window.peek() != currentChar) {
-          window.poll();
-        }
-        window.poll(); // delete first occurrence of the duplicate from start
+      int charIndex = window.indexOf(String.valueOf(s.charAt(i)));
+      if (charIndex >= 0) {
+        window.delete(0, charIndex + 1);
       }
+      window.append(s.charAt(i));
 
-      window.offer(currentChar);
-      if (window.size() > maxLength) {
-        maxLength = window.size();
+      if (window.length() > maxLength) {
+        maxLength = window.length();
       }
     }
 
