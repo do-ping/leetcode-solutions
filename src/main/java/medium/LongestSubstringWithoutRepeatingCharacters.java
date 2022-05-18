@@ -43,17 +43,20 @@ public class LongestSubstringWithoutRepeatingCharacters {
     }
 
     int maxLength = 0;
-    final StringBuilder window = new StringBuilder();
+    int startPointer = 0, endPointer = 0;
 
     for (int i = 0; i < s.length(); i++) {
-      int charIndex = window.indexOf(String.valueOf(s.charAt(i)));
-      if (charIndex >= 0) {
-        window.delete(0, charIndex + 1);
+      for (int j = startPointer; j < i; j++) {
+        if (s.charAt(i) == s.charAt(j)) {
+          startPointer = j + 1;
+          break;
+        }
       }
-      window.append(s.charAt(i));
 
-      if (window.length() > maxLength) {
-        maxLength = window.length();
+      ++endPointer;
+
+      if (endPointer - startPointer > maxLength) {
+        maxLength = endPointer - startPointer;
       }
     }
 
