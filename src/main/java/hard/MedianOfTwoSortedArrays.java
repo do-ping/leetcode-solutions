@@ -39,29 +39,61 @@ import topics.TDivideAndConquer;
 @TDivideAndConquer
 public class MedianOfTwoSortedArrays {
 
-  public double findMedianSortedArrays(int[] nums1, int[] nums2) {
-    final int m = nums1.length;
-    final int n = nums2.length;
-    double result = 0d;
+  // TODO: get back later
+  public float findMedianSortedArrays(int[] nums1, int[] nums2) {
+    // https://www.geeksforgeeks.org/median-of-two-sorted-arrays-of-different-sizes/
+    return nums1.length > nums2.length
+        ? f(nums2, nums2.length, nums1, nums1.length)
+        : f(nums1, nums1.length, nums2, nums2.length);
+  }
 
-    if (m == 0 && n == 0) {
-      return result;
-    } else if (m == 0) {
-      // for even n: (nums[n/2+1]+nums[n/2]) / 2, for odd n: nums[nums.length/2]
-      return (n & 1) == 0 ? (double) (nums2[n >> 1] + nums2[(n >> 1) - 1]) / 2 : nums2[n >> 1];
-    } else if (n == 0) {
-      // for even m: (nums[m/2+1]+nums[m/2]) / 2, for odd m: nums[m/2+1]
-      return (m & 1) == 0 ? (double) (nums1[m >> 1] + nums1[(m >> 1) - 1]) / 2 : nums1[m >> 1];
+  private static float findMedium(int[] array, int length) {
+    return length == 0 ? 0f : length == 1 ? array[0] : (length & 1) == 0
+        ? (float) ((array[length >> 1] + array[(length >> 1) - 1]) / 2)
+        : array[length >> 1];
+  }
+
+  private static float f(int[] smaller, int s, int[] larger, int l) {
+    if (s == 0 && l == 0) {
+      return -1f;
+    } else if (s == 0) {
+      return findMedium(larger, l);
+    } else if (l == 0) {
+      return findMedium(smaller, s);
+    } else if (s == 1) {
+      if (l == 1) {
+        return (float) (smaller[0] + larger[0]) / 2f;
+      }
+      int mid = l >> 1;
+      return (l & 1) == 0
+          ? (float) (smaller[0] + larger[mid] + larger[mid - 1]) / 3f
+          : (float) (smaller[0] + larger[mid] + larger[mid + 1] + larger[mid - 1]) / 4f;
+    } else if (s == 2) {
+      if (l == 2) {
+        return (float) (smaller[0] + smaller[1] + larger[0] + larger[1]) / 4f;
+      }
+      int mid = l >> 1;
+
+      if ((l & 1) != 0) {
+        int midL = larger[mid];
+        int maxLastSBeforeMidL = Math.max(smaller[1], larger[mid - 1]);
+        int minFirstSAfterMidL = Math.min(smaller[0], larger[mid + 1]);
+        return Math.max(
+            Math.min(midL, maxLastSBeforeMidL),
+            Math.max(maxLastSBeforeMidL, minFirstSAfterMidL));
+      }
+      // l&1 == 0
+      return (float) (larger[mid] + larger[mid - 1]
+          + Math.max(smaller[0], larger[mid - 2])
+          + Math.min(smaller[1], larger[mid + 1])) / 4f;
     }
 
-    int l = m + n;
-    int[] mn = new int[l];
-    System.arraycopy(nums1, 0, mn, 0, m);
-    System.arraycopy(nums2, 0, mn, m, n);
-
-    Arrays.sort(mn);
-
-    return (l & 1) == 0 ? (double) (mn[l >> 1] + mn[(l >> 1) - 1]) / 2 : mn[l >> 1];
+    int midS = (s >> 1) - 1;
+    int midL = (l >> 1) - 1;
+    if (smaller[midS] <= larger[midL]) {
+      return f(Arrays.copyOfRange(smaller, midS, s), (s >> 1) + 1, larger, l - midS);
+    }
+    return f(smaller, (s >> 1) + 1, Arrays.copyOfRange(larger, midL, l), l - midS);
   }
 
   public static void main(String[] args) {
