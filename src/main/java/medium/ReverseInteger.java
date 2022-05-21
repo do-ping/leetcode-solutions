@@ -33,35 +33,29 @@ import topics.TMath;
 public class ReverseInteger {
 
   public int reverse(int x) {
-    int rev = 0;
+    long rev = 0;
 
     // write down number signum, remove it temporarily for negative numbers
     // and if the number overflows, simply return
     final boolean isNegative = ((x >> 31) | (-x >>> 31)) < 0;
     if (isNegative) {
       if (x == Integer.MIN_VALUE) {
-        return rev;
+        return 0;
       }
       x = -x;
     }
 
-    if (x > 1_000_000_000 && x%10 > 2) {
-      return rev;
-    }
-
-    final boolean isLarge = x > 214_748_364;
     // get last number of digit with %10, write last number to first,
     // divide original number by 10 to get number without last digit
-    int x10;
     while (x > 0) {
-      x10 = rev * 10;
-      if (isLarge && x10 < 0) {
-        return 0;
-      }
-      rev = x10 + x % 10;
+      rev = rev * 10 + x % 10;
       x /= 10;
     }
 
-    return isNegative ? rev * -1: rev;
+    if (rev > Integer.MAX_VALUE || rev < Integer.MIN_VALUE) {
+      return 0;
+    }
+
+    return (int) (isNegative ? rev * -1: rev);
   }
 }
